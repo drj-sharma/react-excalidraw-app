@@ -1,9 +1,10 @@
 import React from 'react';
 import './App.css';
+import Index from './excalidraw/index';
 
 function App() {
   return (
-    <div>Hey</div>
+    <Index />
   );
 }
 
