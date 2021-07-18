@@ -21,6 +21,7 @@
         "react/jsx-filename-extension": [1, {"extensions": [".js", ".jsx"]}
     ],
     "comma-dangle": 0,   // no comma dangle rule off
-    "no-console": "off"     // no console off
+    "no-console": 0,     // no console off
+    "linebreak-style": 0
     }
 }
