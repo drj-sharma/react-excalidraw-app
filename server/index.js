@@ -20,6 +20,10 @@ app.use(express.urlencoded({
 }));
 (() => initilizeServer(app))(); // listen server
 
+const pathUpload = path.join(__dirname, '../uploads');
+app.use('/excalidraw/get-image', express.static(pathUpload));
+
+// setting up the storage engine for multer
 const storageEngine = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, './uploads');
@@ -30,8 +34,7 @@ const storageEngine = multer.diskStorage({
 });
 const uploads = multer({ storage: storageEngine });
 
-
-// upload image
+// upload single image to the server in [root]/uploads directory
 app.post('/store-image', uploads.single('blob'), (req, res) => {
   // req.on('readable', () => console.log(req.read()));
   console.log(req.file);
@@ -39,10 +42,7 @@ app.post('/store-image', uploads.single('blob'), (req, res) => {
 });
 
 /**
-  @return links of the uploaded images 
+  @return links of the uploaded images
  */
 
-const pathUpload = path.join(__dirname, '../uploads');
 app.get('/all-images', getAllImagesLink);
-
-app.use('/excalidraw/get-image', express.static(pathUpload));
