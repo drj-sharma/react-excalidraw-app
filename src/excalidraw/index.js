@@ -64,10 +64,10 @@ const index = () => {
         elements: excalidrawRef.current.getSceneElements(),
         mimeType: 'image/png',
       });
-      const imageUrl = window.URL.createObjectURL(image);
-      if (prevBlob !== undefined && prevBlob.size === image.size) {
+      if ((prevBlob !== undefined && prevBlob.size === image.size) || image.size < 500) {
         return;
       }
+      const imageUrl = window.URL.createObjectURL(image);
       console.log(image.size);
       prevBlob = image;
       saveToServer(image, imageUrl);
@@ -94,6 +94,7 @@ const index = () => {
   //   }
   // };
   window.setInterval(exportBlob, 10000);
+
   return (
     <>
       <div className="App">
@@ -152,7 +153,15 @@ const index = () => {
       </button>
       <div>
         <div>
-          {data}
+          {data.map((ele, idx) => (
+            <li>
+              <a href={ele}>
+                {idx}
+                {' '}
+                {ele}
+              </a>
+            </li>
+          ))}
         </div>
       </div>
     </>
