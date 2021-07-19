@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+const api = axios.create({
+  baseURL: 'http://localhost:3333'
+});
 const saveToServer = async (image, imageUrl) => {
   console.log(`${image}, ${imageUrl}`);
   const data = new FormData();
@@ -9,7 +12,7 @@ const saveToServer = async (image, imageUrl) => {
       'Content-Type': 'multipart/form-data'
     }
   };
-  await axios.post('http://localhost:4242/store-image', data, config)
+  await api.post('/store-image', data, config)
     .then((res) => console.log(res));
 };
 

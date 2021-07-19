@@ -3,10 +3,12 @@ const cors = require('cors');
 const morgan = require('morgan');
 const multer = require('multer');
 require('dotenv').config();
+const path = require('path');
 
 const app = express();
 const { logger } = require('./logger/logger');
 const { initilizeServer } = require('./config/initilizeServer');
+const { getAllImagesLink } = require('./apis/getAll-ImagesLink');
 // middlewares
 app.use(cors());
 app.use(express.json());
@@ -28,8 +30,19 @@ const storageEngine = multer.diskStorage({
 });
 const uploads = multer({ storage: storageEngine });
 
+
+// upload image
 app.post('/store-image', uploads.single('blob'), (req, res) => {
   // req.on('readable', () => console.log(req.read()));
   console.log(req.file);
   res.send('success');
 });
+
+/**
+  @return links of the uploaded images 
+ */
+
+const pathUpload = path.join(__dirname, '../uploads');
+app.get('/all-images', getAllImagesLink);
+
+app.use('/excalidraw/get-image', express.static(pathUpload));
