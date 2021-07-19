@@ -48,7 +48,7 @@ const index = () => {
   };
 
   /**
-   * a@async function to get all images endpoints
+   * @async function to get all images endpoints
    */
   const getImages = async () => {
     try {
