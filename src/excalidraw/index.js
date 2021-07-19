@@ -2,16 +2,21 @@
 /* eslint-disable linebreak-style */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable linebreak-style */
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Excalidraw, { exportToBlob } from '@excalidraw/excalidraw';
 import saveToServer from './apis/storeImage';
+import getAllImages from './apis/getAll-Images';
+
+let prevBlob;
 
 const mystyle = {
   height: window.screen.height - 30,
 };
 const index = () => {
   const excalidrawRef = useRef(null);
-  const [blobUrl, setBlobUrl] = useState(null);
+  const [data, setData] = useState([]);
+
+  const onChange = (elements) => console.log(elements.length);
 
   // const [viewModeEnabled, setViewModeEnabled] = useState(false);
   // const [zenModeEnabled, setZenModeEnabled] = useState(false);
@@ -53,10 +58,45 @@ const index = () => {
   //   console.log($data);
   // };
 
+  const exportBlob = async () => {
+    try {
+      const image = await exportToBlob({
+        elements: excalidrawRef.current.getSceneElements(),
+        mimeType: 'image/png',
+      });
+      const imageUrl = window.URL.createObjectURL(image);
+      if (prevBlob !== undefined && prevBlob.size === image.size) {
+        return;
+      }
+      console.log(image.size);
+      prevBlob = image;
+      saveToServer(image, imageUrl);
+    } catch {
+      console.log();
+    }
+  };
+
+  const getImages = async () => {
+    try {
+      const links = await getAllImages();
+      setData(links);
+      console.log(`data ${JSON.parse(data)}`);
+    } catch {
+      console.log('parsing json');
+    }
+  };
+
+  // const listOfLinks = () => {
+  //   if (this.data !== undefined) {
+  //     this.data.map((ln) => (
+  //       <p>{ln}</p>
+  //     ));
+  //   }
+  // };
+  window.setInterval(exportBlob, 10000);
   return (
     <>
       <div className="App">
-        <img src={blobUrl} alt="" />
         {/* <div>
         <button type="button" className="update-scene" onClick={updateScene}>
           Update Scene
@@ -101,22 +141,20 @@ const index = () => {
         >
           <Excalidraw
             ref={excalidrawRef}
+            onChange={onChange}
           />
         </div>
       </div>
       <button
-        onClick={async () => {
-          const image = await exportToBlob({
-            elements: excalidrawRef.current.getSceneElements(),
-            mimeType: 'image/png',
-          });
-          const imageUrl = window.URL.createObjectURL(image);
-          setBlobUrl(imageUrl);
-          saveToServer(image, imageUrl);
-        }}
+        onClick={getImages}
       >
-        Get Image
+        Get All Images
       </button>
+      <div>
+        <div>
+          {data}
+        </div>
+      </div>
     </>
   );
 };
